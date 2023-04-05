@@ -36,27 +36,25 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
 			if(token !=null &&!token.equalsIgnoreCase("null")){
 				String userId = tokenProvider.validateAndGetUserId(token);
 				log.info("Authenticated user ID : "+ userId);
-				AbstractAuthenticationToken authentication = 
-						new UsernamePasswordAuthenticationToken(userId,null, AuthorityUtils.NO_AUTHORITIES);
-				
+				AbstractAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userId,null, AuthorityUtils.NO_AUTHORITIES);				
 			
-			authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-			SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
-			securityContext.setAuthentication(authentication);
-			SecurityContextHolder.setContext(securityContext);
+				authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+				SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
+				securityContext.setAuthentication(authentication);
+				SecurityContextHolder.setContext(securityContext);
 			}
 			
-		}catch(Exception ex){
+		} catch(Exception ex) {
 			logger.error("Could not set user authentication in security context",ex);
-			
 		}
+		
 		filterChain.doFilter(request, response);
 	}
 	
 	private String parseBearerToken(HttpServletRequest request){
 		String bearerToken = request.getHeader("Authorization");
 		
-		if(StringUtils.hasText(bearerToken)&& bearerToken.startsWith("Bearer")){
+		if(StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer")){
 			return bearerToken.substring(7);
 		}
 		return null;
